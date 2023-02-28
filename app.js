@@ -6,7 +6,7 @@ const chatContainer = document.querySelector('#chat_container');
 
 let loadInterval;
 
-function loader (element) {
+function loader(element) {
     element.textContent = '';
 
     loadInterval = setInterval(() => {
@@ -51,8 +51,37 @@ function chatStripe (isAi, value, uniqueID) {
                 />
                 </div>
                 <div class="message" id=${uniqueID}>${value}</div>
-                </div>
-                </div>
+            </div>
+        </div>
         `
     )
 }
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const data = new FormData(form);
+
+    // user chatstripe
+    chatContainer.innerHTML += chatStripe(false, data.get('prompt'));
+
+    form.reset();
+
+    // bot's chatstripe
+
+    const uniqueId = generateUniqueId();
+    chatContainer.innerHTML += chatStripe(true, " ", uniqueId);
+
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    const messageDiv = document.getElementById(uniqueId);
+   
+    loader(messageDiv);
+}
+
+form.addEventListener('submit', handleSubmit);
+form.addEventListener('keyup', (e) => {
+    if (e.key === 'ENTER' ) {
+        handleSubmit(e);
+    }
+})
